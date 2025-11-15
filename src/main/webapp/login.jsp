@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -93,6 +93,14 @@
             margin-bottom: 20px;
             text-align: center;
         }
+        
+        .test-login {
+            margin-top: 15px;
+        }
+        
+        .test-login button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
     </style>
 </head>
 <body>
@@ -119,10 +127,11 @@
             <button type="submit">로그인</button>
         </form>
         
-        <form action="<%= request.getContextPath() %>/admin/login" method="post" style="margin-top: 15px;">
+        <!-- 테스트용 최고 관리자 로그인 -->
+        <form action="<%= request.getContextPath() %>/admin/login" method="post" class="test-login">
             <input type="hidden" name="id" value="admin@admin.com">
             <input type="hidden" name="password" value="test">
-            <button type="submit" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">최고 관리자 로그인</button>
+            <button type="submit">최고 관리자 로그인</button>
         </form>
     </div>
 </body>

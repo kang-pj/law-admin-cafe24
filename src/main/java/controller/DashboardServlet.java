@@ -5,7 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 
-@WebServlet("/dashboard")
+@WebServlet("/admin/dashboard")
 public class DashboardServlet extends HttpServlet {
     
     @Override
@@ -15,7 +15,7 @@ public class DashboardServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
         
         if (session == null || session.getAttribute("adminId") == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+            response.sendRedirect(request.getContextPath() + "/admin/login");
             return;
         }
         

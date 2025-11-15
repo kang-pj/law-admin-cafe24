@@ -7,7 +7,7 @@ import dao.AdminDAO;
 import model.Admin;
 import java.io.IOException;
 
-@WebServlet("/login")
+@WebServlet("/admin/login")
 public class LoginServlet extends HttpServlet {
     private AdminDAO adminDAO = new AdminDAO();
     
@@ -21,18 +21,21 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
-        String username = request.getParameter("username");
+        String id = request.getParameter("id");
         String password = request.getParameter("password");
         
-        Admin admin = adminDAO.login(username, password);
+        Admin admin = adminDAO.login(id, password);
         
         if (admin != null) {
             HttpSession session = request.getSession();
-            session.setAttribute("adminId", admin.getUsername());
+            session.setAttribute("adminId", admin.getEmail());
             session.setAttribute("adminName", admin.getName());
-            response.sendRedirect(request.getContextPath() + "/dashboard");
+            session.setAttribute("adminRole", admin.getRole());
+            session.setAttribute("companyId", admin.getCompanyId());
+            session.setAttribute("isSuperAdmin", admin.isSuperAdmin());
+            response.sendRedirect(request.getContextPath() + "/admin/dashboard");
         } else {
-            response.sendRedirect(request.getContextPath() + "/login?error=1");
+            response.sendRedirect(request.getContextPath() + "/admin/login?error=1");
         }
     }
 }

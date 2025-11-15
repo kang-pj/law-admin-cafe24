@@ -1,11 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%
-    String adminName = (String) session.getAttribute("adminName");
-    String companyId = (String) session.getAttribute("companyId");
-    Boolean isSuperAdmin = (Boolean) session.getAttribute("isSuperAdmin");
-%>
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -44,6 +38,11 @@
         
         .user-info span {
             color: #666;
+        }
+        
+        .super-admin {
+            color: #667eea;
+            font-weight: bold;
         }
         
         .logout-btn {
@@ -137,14 +136,8 @@
     <div class="header">
         <h1>관리자 대시보드</h1>
         <div class="user-info">
-            <span><%= adminName %>님 환영합니다 
-            <% if (isSuperAdmin != null && isSuperAdmin) { %>
-                <strong style="color: #667eea;">[최고관리자]</strong>
-            <% } else { %>
-                (회사코드: <%= companyId %>)
-            <% } %>
-            </span>
-            <a href="<%= request.getContextPath() %>/admin/logout" class="logout-btn">로그아웃</a>
+            <span>관리자님 환영합니다 <strong class="super-admin">[최고관리자]</strong></span>
+            <a href="/admin/logout" class="logout-btn">로그아웃</a>
         </div>
     </div>
     

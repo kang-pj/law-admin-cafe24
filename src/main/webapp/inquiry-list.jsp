@@ -27,7 +27,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= pageTitle %></title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/common.css">
+    <style>
+        <%@ include file="/css/common.css" %>
+    </style>
     <style>
         .content-header {
             display: flex;

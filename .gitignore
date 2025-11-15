@@ -1,0 +1,22 @@
+# Compiled class files
+*.class
+target/
+WEB-INF/classes/*.class
+
+# Log files
+*.log
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Sensitive information (backup - already in repo for deployment)
+# db.properties

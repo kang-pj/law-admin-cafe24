@@ -28,6 +28,7 @@ public class LoginServlet extends HttpServlet {
         
         if (admin != null) {
             HttpSession session = request.getSession();
+            session.setAttribute("admin", admin);  // Admin 객체 저장
             session.setAttribute("adminId", admin.getEmail());
             session.setAttribute("adminName", admin.getName());
             session.setAttribute("adminRole", admin.getRole());

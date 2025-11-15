@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문의 상세</title>
+    <style>
+        /* common.css 내용 포함 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+            background: #f8f9fa;
+        }
+        
+        .header {
+            background: #495057;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .user-info span {
+            color: #e9ecef;
+            font-size: 13px;
+        }
+        
+        .role-badge {
+            padding: 3px 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        
+        .logout-btn {
+            padding: 6px 14px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 13px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.2s;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.3);
+        }
+        
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            left: 0;
+            width: 220px;
+            height: calc(100vh - 56px);
+            background: white;
+            padding: 16px 0;
+            overflow-y: auto;
+            border-right: 1px solid #e9ecef;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 12px;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 2px;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            color: #495057;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        
+        .sidebar-menu a:hover {
+            background: #f8f9fa;
+        }
+        
+        .sidebar-menu a.active {
+            background: #e7f5ff;
+            color: #1971c2;
+            font-weight: 500;
+        }
+        
+        .sidebar-menu a .icon {
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .menu-parent {
+            pointer-events: none;
+            color: #adb5bd;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .submenu {
+            list-style: none;
+            padding-left: 40px;
+            margin-top: 4px;
+        }
+        
+        .submenu li {
+            margin-bottom: 2px;
+        }
+        
+        .submenu a {
+            padding: 8px 12px;
+            font-size: 13px;
+            color: #6c757d;
+        }
+        
+        .submenu a:hover {
+            color: #1971c2;
+        }
+        
+        .main-content {
+            margin-left: 220px;
+            margin-top: 56px;
+            padding: 24px;
+            min-height: calc(100vh - 56px);
+        }
+        
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 20px;
+        }
+        
+        /* 페이지별 스타일 */
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .btn-list {
+            padding: 8px 16px;
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        
+        .btn-list:hover {
+            background: #5a6268;
+        }
+        
+        .detail-container {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            overflow: hidden;
+        }
+        
+        .author-info {
+            padding: 0 0 3px 0;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .info-table tr {
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .info-table tr:last-child {
+            border-bottom: none;
+        }
+        
+        .info-table th {
+            background: white;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #495057;
+            font-weight: 600;
+            text-align: left;
+            width: 120px;
+        }
+        
+        .info-table td {
+            background: white;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #212529;
+        }
+        
+        .content-section {
+            padding: 24px;
+        }
+        
+        .content-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 8px;
+        }
+        
+        .content-date {
+            font-size: 13px;
+            color: #6c757d;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e9ecef;
+            margin-bottom: 16px;
+        }
+        
+        .content-body {
+            font-size: 14px;
+            line-height: 1.8;
+            color: #495057;
+            min-height: 200px;
+            white-space: pre-wrap;
+        }
+        
+        .status-control {
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .status-control label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .status-control select {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .btn-save {
+            padding: 8px 20px;
+            background: #1971c2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .btn-save:hover {
+            background: #1864ab;
+        }
+        
+        .memo-section {
+            margin-top: 24px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            overflow: hidden;
+        }
+        
+        .memo-header {
+            padding: 16px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 15px;
+            font-weight: 600;
+            color: #212529;
+        }
+        
+        .memo-write {
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .memo-write textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+        
+        .memo-write textarea:focus {
+            outline: none;
+            border-color: #1971c2;
+        }
+        
+        .memo-write-footer {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 12px;
+        }
+        
+        .memo-list {
+            padding: 20px;
+        }
+        
+        .memo-item {
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+        
+        .memo-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .memo-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .memo-author {
+            font-size: 13px;
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .memo-date {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        
+        .memo-content {
+            font-size: 14px;
+            color: #212529;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        
+        .memo-empty {
+            text-align: center;
+            padding: 40px;
+            color: #adb5bd;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <div class="header">
+        <div class="header-left">
+            <h1>관리자 시스템</h1>
+        </div>
+        <div class="user-info">
+            <span>관리자</span>
+            <span class="role-badge">최고관리자</span>
+            <a href="/admin/logout" class="logout-btn">로그아웃</a>
+        </div>
+    </div>
+    
+    <!-- 사이드바 -->
+    <div class="sidebar">
+        <ul class="sidebar-menu">
+            <li>
+                <a href="/admin/dashboard">
+                    <span class="icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                    </span>
+                    <span>대시보드</span>
+                </a>
+            </li>
+            
+            <li class="menu-group">
+                <a class="menu-parent">
+                    <span class="icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <path d="M3 7h18M3 12h18M3 17h18"></path>
+                        </svg>
+                    </span>
+                    <span>게시판</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="#" class="active">문의 게시판</a></li>
+                    <li><a href="#">자가 검진 게시판</a></li>
+                    <li><a href="#">기타 게시판</a></li>
+                </ul>
+            </li>
+            
+            <li class="menu-group">
+                <a class="menu-parent">
+                    <span class="icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <path d="M3 3v18h18"></path>
+                            <path d="M18 17V9l-5 5-5-5v8"></path>
+                        </svg>
+                    </span>
+                    <span>통계</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="#">접속 통계</a></li>
+                </ul>
+            </li>
+            
+            <li class="menu-group">
+                <a class="menu-parent">
+                    <span class="icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M12 2v3M12 19v3M2 12h3M19 12h3"></path>
+                        </svg>
+                    </span>
+                    <span>설정</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="#">업체 관리</a></li>
+                    <li><a href="#">관리자 설정</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    
+    <!-- 메인 컨텐츠 -->
+    <div class="main-content">
+        <div class="content-header">
+            <h2 class="page-title">문의 상세</h2>
+            <a href="#" class="btn-list">목록으로</a>
+        </div>
+        
+        <!-- 상세 내용 -->
+        <div class="detail-container">
+            <!-- 작성자 정보 -->
+            <div class="author-info">
+                <table class="info-table">
+                    <tr>
+                        <th>작성자</th>
+                        <td>홍길동</td>
+                    </tr>
+                    <tr>
+                        <th>이메일</th>
+                        <td>hong@example.com</td>
+                    </tr>
+                    <tr>
+                        <th>연락처</th>
+                        <td>010-1234-5678</td>
+                    </tr>
+                    <tr>
+                        <th>채무금액</th>
+                        <td>5,000만원</td>
+                    </tr>
+                    <tr>
+                        <th>월소득</th>
+                        <td>300만원</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <!-- 제목 및 내용 -->
+            <div class="content-section">
+                <h3 class="content-title">채무 관련 문의드립니다</h3>
+                <div class="content-date">2024-01-15 14:30</div>
+                <div class="content-body">안녕하세요.
+
+현재 채무 문제로 어려움을 겪고 있어 상담을 요청드립니다.
+
+총 채무액은 약 5천만원 정도이며, 월 소득은 300만원 정도입니다.
+개인회생이나 파산 절차에 대해 자세히 알고 싶습니다.
+
+빠른 답변 부탁드립니다.
+감사합니다.</div>
+            </div>
+            
+            <!-- 상태 변경 -->
+            <div class="status-control">
+                <label>처리 상태</label>
+                <select onchange="alert('상태가 변경되었습니다.')">
+                    <option value="pending">대기</option>
+                    <option value="processing">처리중</option>
+                    <option value="completed">완료</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- 메모 섹션 -->
+        <div class="memo-section">
+            <div class="memo-header">관리자 메모</div>
+            
+            <!-- 메모 작성 -->
+            <div class="memo-write">
+                <textarea placeholder="메모를 입력하세요..."></textarea>
+                <div class="memo-write-footer">
+                    <button class="btn-save">메모 추가</button>
+                </div>
+            </div>
+            
+            <!-- 메모 목록 -->
+            <div class="memo-list">
+                <div class="memo-item">
+                    <div class="memo-meta">
+                        <span class="memo-author">관리자</span>
+                        <span class="memo-date">2024-01-15 15:20</span>
+                    </div>
+                    <div class="memo-content">고객에게 전화 상담 완료. 개인회생 절차 안내함.</div>
+                </div>
+                
+                <div class="memo-item">
+                    <div class="memo-meta">
+                        <span class="memo-author">관리자</span>
+                        <span class="memo-date">2024-01-15 16:45</span>
+                    </div>
+                    <div class="memo-content">필요 서류 목록 이메일로 발송 완료.</div>
+                </div>
+                
+                <!-- 메모가 없을 때 -->
+                <!-- <div class="memo-empty">등록된 메모가 없습니다.</div> -->
+            </div>
+        </div>
+    </div>
+</body>
+</html>

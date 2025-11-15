@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문의 게시판</title>
+    <style>
+        /* 공통 스타일 (common.css) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+            background: #f8f9fa;
+        }
+        
+        /* 헤더 */
+        .header {
+            background: #495057;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .user-info span {
+            color: #e9ecef;
+            font-size: 13px;
+        }
+        
+        .role-badge {
+            padding: 3px 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        
+        .logout-btn {
+            padding: 6px 14px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 13px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.2s;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.3);
+        }
+        
+        /* 사이드바 */
+        .sidebar {
+            position: fixed;
+            top: 56px;
+            left: 0;
+            width: 220px;
+            height: calc(100vh - 56px);
+            background: white;
+            padding: 16px 0;
+            overflow-y: auto;
+            border-right: 1px solid #e9ecef;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0 12px;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 2px;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            color: #495057;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        
+        .sidebar-menu a:hover {
+            background: #f8f9fa;
+        }
+        
+        .sidebar-menu a.active {
+            background: #e7f5ff;
+            color: #1971c2;
+            font-weight: 500;
+        }
+        
+        .sidebar-menu a .icon {
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .menu-parent {
+            pointer-events: none;
+            color: #adb5bd;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .submenu {
+            list-style: none;
+            padding-left: 40px;
+            margin-top: 4px;
+        }
+        
+        .submenu li {
+            margin-bottom: 2px;
+        }
+        
+        .submenu a {
+            padding: 8px 12px;
+            font-size: 13px;
+            color: #6c757d;
+        }
+        
+        .submenu a:hover {
+            color: #1971c2;
+        }
+        
+        /* 메인 컨텐츠 */
+        .main-content {
+            margin-left: 220px;
+            margin-top: 56px;
+            padding: 24px;
+            min-height: calc(100vh - 56px);
+        }
+        
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 20px;
+        }
+        
+        /* 페이지별 스타일 */
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .filter-tabs a {
+            padding: 8px 16px;
+            background: white;
+            color: #495057;
+            text-decoration: none;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .filter-tabs a:hover {
+            background: #f8f9fa;
+        }
+        
+        .filter-tabs a.active {
+            background: #1971c2;
+            color: white;
+            border-color: #1971c2;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .search-box select,
+        .search-box input {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .search-box input {
+            width: 300px;
+        }
+        
+        .search-box button {
+            padding: 8px 16px;
+            background: #495057;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        .board-container {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            overflow: hidden;
+        }
+        
+        .board-stats {
+            padding: 12px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 13px;
+            color: #6c757d;
+        }
+        
+        .list-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .list-table thead {
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .list-table th {
+            padding: 14px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #495057;
+            text-align: center;
+        }
+        
+        .list-table th:nth-child(1) { width: 80px; }
+        .list-table th:nth-child(2) { width: 100px; }
+        .list-table th:nth-child(3) { text-align: left; }
+        .list-table th:nth-child(4) { width: 120px; text-align: left; }
+        .list-table th:nth-child(5) { width: 100px; }
+        .list-table th:nth-child(6) { width: 100px; }
+        .list-table th:nth-child(7) { width: 120px; }
+        
+        .list-table td {
+            padding: 14px 12px;
+            font-size: 14px;
+            color: #495057;
+            border-bottom: 1px solid #f1f3f5;
+            text-align: center;
+        }
+        
+        .list-table td:nth-child(3),
+        .list-table td:nth-child(4) {
+            text-align: left;
+        }
+        
+        .list-table td a {
+            color: #212529;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .list-table td a:hover {
+            color: #1971c2;
+        }
+        
+        .list-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .type-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .type-inq { background: #e7f5ff; color: #1971c2; }
+        .type-self { background: #fff3cd; color: #856404; }
+        .type-kakao { background: #fff3bf; color: #856404; }
+        .type-email { background: #d1e7dd; color: #0f5132; }
+        .type-etc { background: #e2e3e5; color: #383d41; }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1.5px solid;
+        }
+        
+        .status-pending { 
+            background: #fff9e6; 
+            color: #d97706; 
+            border-color: #fbbf24;
+        }
+        .status-processing { 
+            background: #e0f2fe; 
+            color: #0369a1; 
+            border-color: #38bdf8;
+        }
+        .status-completed { 
+            background: #dcfce7; 
+            color: #15803d; 
+            border-color: #4ade80;
+        }
+        
+        .read-badge {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        
+        .read-badge.unread {
+            color: #dc3545;
+            font-weight: 600;
+        }
+        
+        .memo-count {
+            display: inline-block;
+            margin-left: 6px;
+            color: #1971c2;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            padding: 20px;
+        }
+        
+        .pagination a,
+        .pagination span {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            color: #495057;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .pagination a:hover {
+            background: #f8f9fa;
+        }
+        
+        .pagination .active {
+            background: #1971c2;
+            color: white;
+            border-color: #1971c2;
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 (include/header.jsp) -->
+    <div class="header">
+        <div class="header-left">
+            <h1>관리자 시스템</h1>
+        </div>
+        <div class="user-info">
+            <span>관리자</span>
+            <span class="role-badge">최고관리자</span>
+            <a href="/admin/logout" class="logout-btn">로그아웃</a>
+        </div>
+    </div>
+    
+    <!-- 사이드바 (include/sidebar.jsp) -->
+    <div class="sidebar">
+        <ul class="sidebar-menu">
+            <li>
+                <a href="/admin/dashboard">
+                    <span class="icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                    </span>
+                    <span>대시보드</span>
+                </a>
+            </li>
+            
+            <li class="menu-group">
+                <a class="menu-parent">
+                    <span class="icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <path d="M3 7h18M3 12h18M3 17h18"></path>
+                        </svg>
+                    </span>
+                    <span>게시판</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="/admin/inquiry/list?type=INQ" class="active">문의 게시판</a></li>
+                    <li><a href="/admin/inquiry/list?type=SELF">자가진단 게시판</a></li>
+                    <li><a href="/admin/inquiry/list?type=KAKAO">카카오 문의</a></li>
+                    <li><a href="/admin/inquiry/list?type=EMAIL">이메일 문의</a></li>
+                    <li><a href="/admin/inquiry/list?type=ETC">기타 문의</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    
+    <!-- 메인 컨텐츠 -->
+    <div class="main-content">
+        <div class="content-header">
+            <h2 class="page-title">문의 게시판</h2>
+        </div>
+        
+        <!-- 필터 탭 -->
+        <div class="filter-tabs">
+            <a href="/admin/inquiry/list">전체</a>
+            <a href="/admin/inquiry/list?type=INQ" class="active">문의</a>
+            <a href="/admin/inquiry/list?type=SELF">자가진단</a>
+            <a href="/admin/inquiry/list?type=KAKAO">카카오</a>
+            <a href="/admin/inquiry/list?type=EMAIL">이메일</a>
+            <a href="/admin/inquiry/list?type=ETC">기타</a>
+        </div>
+        
+        <!-- MASTER 전용 업체 필터 -->
+        <div class="filter-tabs" style="margin-bottom: 16px;">
+            <a href="/admin/inquiry/list?type=INQ" class="active">전체 업체</a>
+            <a href="/admin/inquiry/list?type=INQ&company=COMP001">법무법인 A</a>
+            <a href="/admin/inquiry/list?type=INQ&company=COMP002">법무법인 B</a>
+        </div>
+        
+        <!-- 검색 -->
+        <div class="search-box">
+            <select>
+                <option value="all">전체</option>
+                <option value="title">제목</option>
+                <option value="name">작성자</option>
+                <option value="email">이메일</option>
+            </select>
+            <input type="text" placeholder="검색어를 입력하세요">
+            <button>검색</button>
+        </div>
+        
+        <!-- 게시판 -->
+        <div class="board-container">
+            <div class="board-stats">
+                전체 <strong>18</strong>건
+            </div>
+            
+            <table class="list-table">
+                <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>타입</th>
+                        <th>제목</th>
+                        <th>작성자</th>
+                        <th>상태</th>
+                        <th>읽음</th>
+                        <th>작성일</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>18</td>
+                        <td><span class="type-badge type-inq">문의게시판</span></td>
+                        <td>
+                            <a href="/admin/inquiry/detail?id=18">긴급 상담 요청 <span class="memo-count">[2]</span></a>
+                        </td>
+                        <td>신동욱</td>
+                        <td><span class="status-badge status-pending">대기</span></td>
+                        <td><span class="read-badge unread">미읽음</span></td>
+                        <td>2024-01-15</td>
+                    </tr>
+                    <tr>
+                        <td>17</td>
+                        <td><span class="type-badge type-self">자가진단</span></td>
+                        <td>
+                            <a href="/admin/inquiry/detail?id=17">자가진단 후 추가 문의 <span class="memo-count">[1]</span></a>
+                        </td>
+                        <td>배수지</td>
+                        <td><span class="status-badge status-processing">처리중</span></td>
+                        <td><span class="read-badge">읽음</span></td>
+                        <td>2024-01-15</td>
+                    </tr>
+                    <tr>
+                        <td>16</td>
+                        <td><span class="type-badge type-kakao">카카오</span></td>
+                        <td><a href="/admin/inquiry/detail?id=16">카톡 빠른 상담</a></td>
+                        <td>류현진</td>
+                        <td><span class="status-badge status-pending">대기</span></td>
+                        <td><span class="read-badge unread">미읽음</span></td>
+                        <td>2024-01-15</td>
+                    </tr>
+                    <tr>
+                        <td>15</td>
+                        <td><span class="type-badge type-email">이메일</span></td>
+                        <td><a href="/admin/inquiry/detail?id=15">이메일 상담 신청</a></td>
+                        <td>안유진</td>
+                        <td><span class="status-badge status-completed">완료</span></td>
+                        <td><span class="read-badge">읽음</span></td>
+                        <td>2024-01-14</td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td><span class="type-badge type-etc">기타</span></td>
+                        <td><a href="/admin/inquiry/detail?id=14">서비스 문의</a></td>
+                        <td>장서현</td>
+                        <td><span class="status-badge status-processing">처리중</span></td>
+                        <td><span class="read-badge">읽음</span></td>
+                        <td>2024-01-14</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <!-- 페이징 -->
+            <div class="pagination">
+                <a href="#">&laquo;</a>
+                <span class="active">1</span>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">&raquo;</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

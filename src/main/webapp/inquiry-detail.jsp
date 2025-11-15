@@ -19,7 +19,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= inquiry.getTypeLabel() %> 상세</title>
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/common.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/common.css">
     <style>
         .content-header {
             display: flex;

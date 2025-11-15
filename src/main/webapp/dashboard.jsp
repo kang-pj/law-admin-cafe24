@@ -2,16 +2,11 @@
 <%@ page import="model.Inquiry, java.util.List" %>
 <%
     String adminName = (String) session.getAttribute("adminName");
-    String companyId = (String) session.getAttribute("companyId");
     String role = (String) session.getAttribute("adminRole");
-    Boolean isSuperAdmin = (Boolean) session.getAttribute("isSuperAdmin");
     
-    // 권한 체크
     boolean isMaster = "MASTER".equals(role);
     boolean isAdmin = "ADMIN".equals(role);
-    boolean isUser = "USER".equals(role);
     
-    // 데이터 가져오기
     @SuppressWarnings("unchecked")
     List<Inquiry> recentInquiries = (List<Inquiry>) request.getAttribute("recentInquiries");
     @SuppressWarnings("unchecked")
@@ -35,13 +30,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 대시보드</title>
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/common.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/common.css">
 </head>
 <body>
     <%@ include file="/include/header.jsp" %>
     <%@ include file="/include/sidebar.jsp" %>
     
-    <!-- 메인 컨텐츠 -->
     <div class="main-content">
         <h2 class="page-title">대시보드</h2>
         
@@ -69,12 +63,9 @@
                 <div class="number"><%= processingCount %></div>
                 <p>건</p>
             </div>
-            
         </div>
         
-        <!-- 게시판 미리보기 -->
         <div class="board-preview-section">
-            <!-- 문의 게시판 -->
             <div class="board-preview">
                 <div class="board-header">
                     <h3>문의 게시판</h3>
@@ -117,7 +108,6 @@
                 </table>
             </div>
             
-            <!-- 자가 검진 게시판 -->
             <div class="board-preview">
                 <div class="board-header">
                     <h3>자가진단 게시판</h3>
@@ -160,7 +150,6 @@
                 </table>
             </div>
             
-            <!-- 기타 문의 -->
             <div class="board-preview">
                 <div class="board-header">
                     <h3>기타 문의</h3>
@@ -204,7 +193,6 @@
             </div>
         </div>
         
-        <!-- 바로가기 -->
         <div class="dashboard-grid" style="margin-top: 24px;">
             <a href="#" class="card card-link">
                 <h3>접속 통계</h3>

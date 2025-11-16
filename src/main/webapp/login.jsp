@@ -1,138 +1,173 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>관리자 로그인</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Malgun Gothic', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .login-container {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            width: 100%;
-            max-width: 400px;
-        }
-        
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 28px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 500;
-        }
-        
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-        
-        input[type="text"]:focus,
-        input[type="password"]:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        button {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-        }
-        
-        button:active {
-            transform: translateY(0);
-        }
-        
-        .error-message {
-            background: #fee;
-            color: #c33;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .test-login {
-            margin-top: 15px;
-        }
-        
-        .test-login button {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-    </style>
-</head>
-<body>
-    <div class="login-container">
-        <h1>관리자 로그인</h1>
-        
-        <% if (request.getParameter("error") != null) { %>
-            <div class="error-message">
-                아이디 또는 비밀번호가 올바르지 않습니다.
-            </div>
-        <% } %>
-        
-        <form action="<%= request.getContextPath() %>/admin/login" method="post">
-            <div class="form-group">
-                <label for="id">이메일</label>
-                <input type="text" id="id" name="id" required autofocus placeholder="admin@admin.com">
-            </div>
-            
-            <div class="form-group">
-                <label for="password">비밀번호</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            
-            <button type="submit">로그인</button>
-        </form>
-        
-        <!-- 테스트용 최고 관리자 로그인 -->
-        <form action="<%= request.getContextPath() %>/admin/login" method="post" class="test-login">
-            <input type="hidden" name="id" value="admin@admin.com">
-            <input type="hidden" name="password" value="test">
-            <button type="submit">최고 관리자 로그인</button>
-        </form>
-    </div>
-</body>
-</html>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+    <!DOCTYPE html>
+    <html lang="ko">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>관리자 로그인</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: 'Malgun Gothic', sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .login-container {
+                background: white;
+                padding: 40px;
+                border-radius: 10px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+                width: 100%;
+                max-width: 400px;
+            }
+
+            h1 {
+                text-align: center;
+                color: #333;
+                margin-bottom: 30px;
+                font-size: 28px;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 8px;
+                color: #555;
+                font-weight: 500;
+            }
+
+            input[type="text"],
+            input[type="password"] {
+                width: 100%;
+                padding: 12px;
+                border: 2px solid #e0e0e0;
+                border-radius: 5px;
+                font-size: 14px;
+                transition: border-color 0.3s;
+            }
+
+            input[type="text"]:focus,
+            input[type="password"]:focus {
+                outline: none;
+                border-color: #667eea;
+            }
+
+            button {
+                width: 100%;
+                padding: 14px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                border-radius: 5px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: transform 0.2s;
+            }
+
+            button:hover {
+                transform: translateY(-2px);
+            }
+
+            button:active {
+                transform: translateY(0);
+            }
+
+            .error-message {
+                background: #fee;
+                color: #c33;
+                padding: 10px;
+                border-radius: 5px;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+
+            .test-login {
+                margin-top: 15px;
+            }
+
+            .test-login button {
+                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="login-container">
+            <h1>관리자 로그인</h1>
+
+            <% if (request.getParameter("error") !=null) { %>
+                <div class="error-message">
+                    아이디 또는 비밀번호가 올바르지 않습니다.
+                </div>
+                <% } %>
+
+                    <form action="<%= request.getContextPath() %>/admin/login" method="post">
+                        <div class="form-group">
+                            <label for="id">이메일</label>
+                            <input type="text" id="id" name="id" required autofocus placeholder="admin@admin.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">비밀번호</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+
+                        <button type="submit">로그인</button>
+                    </form>
+
+                    <!-- 테스트용 로그인 버튼들 -->
+                    <form action="<%= request.getContextPath() %>/admin/login" method="post" style="margin-top: 15px;">
+                        <input type="hidden" name="id" value="admin@admin.com">
+                        <input type="hidden" name="password" value="test">
+                        <button type="submit" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">최고
+                            관리자 (MASTER)</button>
+                    </form>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                        <form action="<%= request.getContextPath() %>/admin/login" method="post">
+                            <input type="hidden" name="id" value="admin1@admin.com">
+                            <input type="hidden" name="password" value="test">
+                            <button type="submit"
+                                style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">A 관리자</button>
+                        </form>
+
+                        <form action="<%= request.getContextPath() %>/admin/login" method="post">
+                            <input type="hidden" name="id" value="admin2@admin.com">
+                            <input type="hidden" name="password" value="test">
+                            <button type="submit"
+                                style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">A 일반</button>
+                        </form>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                        <form action="<%= request.getContextPath() %>/admin/login" method="post">
+                            <input type="hidden" name="id" value="admin3@admin.com">
+                            <input type="hidden" name="password" value="test">
+                            <button type="submit"
+                                style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">B 관리자</button>
+                        </form>
+
+                        <form action="<%= request.getContextPath() %>/admin/login" method="post">
+                            <input type="hidden" name="id" value="admin4@admin.com">
+                            <input type="hidden" name="password" value="test">
+                            <button type="submit"
+                                style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">B 일반</button>
+                        </form>
+                    </div>
+        </div>
+    </body>
+
+    </html>

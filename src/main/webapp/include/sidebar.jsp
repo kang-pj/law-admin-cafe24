@@ -91,8 +91,10 @@
                 <span>설정</span>
             </a>
             <ul class="submenu">
-                <li><a href="#">업체 관리</a></li>
-                <li><a href="#">관리자 설정</a></li>
+                <li><a href="<%= contextPath %>/admin/company/list"
+                       class="<%= currentPath.contains("/company/") ? "active" : "" %>">업체 관리</a></li>
+                <li><a href="<%= contextPath %>/admin/user/list"
+                       class="<%= currentPath.contains("/user/") || currentPath.contains("/admin-") ? "active" : "" %>">관리자 관리</a></li>
             </ul>
         </li>
         <% } else if (sidebarIsAdmin) { %>
@@ -108,7 +110,10 @@
                 <span>설정</span>
             </a>
             <ul class="submenu">
-                <li><a href="#">관리자 설정</a></li>
+                <li><a href="<%= contextPath %>/admin/company/my"
+                       class="<%= currentPath.contains("/company/my") ? "active" : "" %>">사이트 관리</a></li>
+                <li><a href="<%= contextPath %>/admin/user/list"
+                       class="<%= currentPath.contains("/user/") || currentPath.contains("/admin-") ? "active" : "" %>">관리자 관리</a></li>
             </ul>
         </li>
         <% } %>

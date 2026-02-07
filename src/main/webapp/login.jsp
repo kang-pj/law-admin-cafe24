@@ -94,14 +94,6 @@
                 margin-bottom: 20px;
                 text-align: center;
             }
-
-            .test-login {
-                margin-top: 15px;
-            }
-
-            .test-login button {
-                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            }
         </style>
     </head>
 
@@ -128,45 +120,6 @@
 
                         <button type="submit">로그인</button>
                     </form>
-
-                    <!-- 테스트용 로그인 버튼들 -->
-                    <form action="<%= request.getContextPath() %>/admin/login" method="post" style="margin-top: 15px;">
-                        <input type="hidden" name="id" value="admin@admin.com">
-                        <input type="hidden" name="password" value="test">
-                        <button type="submit" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">최고
-                            관리자 (MASTER)</button>
-                    </form>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
-                        <form action="<%= request.getContextPath() %>/admin/login" method="post">
-                            <input type="hidden" name="id" value="admin1@admin.com">
-                            <input type="hidden" name="password" value="test">
-                            <button type="submit"
-                                style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">A 관리자</button>
-                        </form>
-
-                        <form action="<%= request.getContextPath() %>/admin/login" method="post">
-                            <input type="hidden" name="id" value="admin2@admin.com">
-                            <input type="hidden" name="password" value="test">
-                            <button type="submit"
-                                style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">A 일반</button>
-                        </form>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
-                        <form action="<%= request.getContextPath() %>/admin/login" method="post">
-                            <input type="hidden" name="id" value="admin3@admin.com">
-                            <input type="hidden" name="password" value="test">
-                            <button type="submit"
-                                style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">B 관리자</button>
-                        </form>
-
-                        <form action="<%= request.getContextPath() %>/admin/login" method="post">
-                            <input type="hidden" name="id" value="admin4@admin.com">
-                            <input type="hidden" name="password" value="test">
-                            <button type="submit"
-                                style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">B 일반</button>
-                        </form>
-                    </div>
         </div>
     </body>
 

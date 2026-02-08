@@ -1,0 +1,11 @@
+open shesy22.cafe24.com
+shesy22
+Rkdwnl24!!
+cd tomcat/webapps
+binary
+delete ROOT.war
+cd ROOT
+mdelete *.*
+cd ..
+rmdir ROOT
+bye

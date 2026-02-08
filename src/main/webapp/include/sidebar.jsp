@@ -73,7 +73,8 @@
                 <span>통계</span>
             </a>
             <ul class="submenu">
-                <li><a href="#">접속 통계</a></li>
+                <li><a href="<%= contextPath %>/admin/stats/access"
+                       class="<%= currentPath.contains("/stats/access") ? "active" : "" %>">접속 통계</a></li>
             </ul>
         </li>
         <% } %>

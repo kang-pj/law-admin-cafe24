@@ -20,7 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
-@WebServlet("/admin/stats/access")
+@WebServlet("/admin/access/stats")
 public class AccessStatsServlet extends HttpServlet {
     
     @Override

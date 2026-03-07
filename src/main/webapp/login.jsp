@@ -94,6 +94,25 @@
                 margin-bottom: 20px;
                 text-align: center;
             }
+            
+            .remember-me {
+                display: flex;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+            
+            .remember-me input[type="checkbox"] {
+                width: auto;
+                margin-right: 8px;
+                cursor: pointer;
+            }
+            
+            .remember-me label {
+                margin: 0;
+                font-weight: normal;
+                cursor: pointer;
+                user-select: none;
+            }
         </style>
     </head>
 
@@ -107,7 +126,7 @@
                 </div>
                 <% } %>
 
-                    <form action="<%= request.getContextPath() %>/admin/login" method="post">
+                    <form action="<%= request.getContextPath() %>/admin/login" method="post" id="loginForm">
                         <div class="form-group">
                             <label for="id">이메일</label>
                             <input type="text" id="id" name="id" required autofocus placeholder="admin@admin.com">
@@ -117,10 +136,42 @@
                             <label for="password">비밀번호</label>
                             <input type="password" id="password" name="password" required>
                         </div>
+                        
+                        <div class="remember-me">
+                            <input type="checkbox" id="rememberMe" name="rememberMe">
+                            <label for="rememberMe">아이디 저장</label>
+                        </div>
 
                         <button type="submit">로그인</button>
                     </form>
         </div>
+        
+        <script>
+            // 페이지 로드 시 저장된 아이디 불러오기
+            window.addEventListener('DOMContentLoaded', function() {
+                const savedId = localStorage.getItem('savedAdminId');
+                const rememberMe = localStorage.getItem('rememberMe') === 'true';
+                
+                if (savedId && rememberMe) {
+                    document.getElementById('id').value = savedId;
+                    document.getElementById('rememberMe').checked = true;
+                }
+            });
+            
+            // 폼 제출 시 아이디 저장 처리
+            document.getElementById('loginForm').addEventListener('submit', function() {
+                const idInput = document.getElementById('id');
+                const rememberMeCheckbox = document.getElementById('rememberMe');
+                
+                if (rememberMeCheckbox.checked) {
+                    localStorage.setItem('savedAdminId', idInput.value);
+                    localStorage.setItem('rememberMe', 'true');
+                } else {
+                    localStorage.removeItem('savedAdminId');
+                    localStorage.removeItem('rememberMe');
+                }
+            });
+        </script>
     </body>
 
     </html>

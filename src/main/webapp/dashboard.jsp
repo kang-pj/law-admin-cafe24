@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <%@ page import="model.Inquiry, java.util.List" %>
         <% String adminName=(String) session.getAttribute("adminName"); String role=(String)
             session.getAttribute("adminRole"); boolean isMaster="MASTER" .equals(role); boolean isAdmin="ADMIN"
@@ -233,7 +233,7 @@
                                                 </div>
 
                                                 <div class="dashboard-grid" style="margin-top: 24px;">
-                                                    <a href="<%= request.getContextPath() %>/admin/stats/access" class="card card-link">
+                                                    <a href="<%= request.getContextPath() %>/admin/access/stats" class="card card-link">
                                                         <h3>접속 통계</h3>
                                                         <p>바로가기 →</p>
                                                     </a>

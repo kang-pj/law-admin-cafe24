@@ -17,15 +17,8 @@ public class ConsultationLeadDAO {
     // 총 접수 수
     public int getTotalCount(String companyId) throws SQLException {
         String sql = "SELECT COUNT(*) as count FROM consultation_leads";
-        if (companyId != null) {
-            sql += " WHERE company_id = ?";
-        }
         
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            if (companyId != null) {
-                pstmt.setString(1, companyId);
-            }
-            
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("count");
@@ -38,15 +31,8 @@ public class ConsultationLeadDAO {
     // 오늘 접수 수
     public int getTodayCount(String companyId) throws SQLException {
         String sql = "SELECT COUNT(*) as count FROM consultation_leads WHERE DATE(created_at) = CURDATE()";
-        if (companyId != null) {
-            sql += " AND company_id = ?";
-        }
         
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            if (companyId != null) {
-                pstmt.setString(1, companyId);
-            }
-            
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("count");
@@ -59,15 +45,9 @@ public class ConsultationLeadDAO {
     // 상태별 접수 수
     public int getCountByStatus(String status, String companyId) throws SQLException {
         String sql = "SELECT COUNT(*) as count FROM consultation_leads WHERE status = ?";
-        if (companyId != null) {
-            sql += " AND company_id = ?";
-        }
         
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, status);
-            if (companyId != null) {
-                pstmt.setString(2, companyId);
-            }
             
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
@@ -84,19 +64,11 @@ public class ConsultationLeadDAO {
         
         String sql = "SELECT DATE(created_at) as date, COUNT(*) as count " +
                     "FROM consultation_leads " +
-                    "WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY)";
-        
-        if (companyId != null) {
-            sql += " AND company_id = ?";
-        }
-        
-        sql += " GROUP BY DATE(created_at) ORDER BY date";
+                    "WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY) " +
+                    "GROUP BY DATE(created_at) ORDER BY date";
         
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, days);
-            if (companyId != null) {
-                pstmt.setString(2, companyId);
-            }
             
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -111,20 +83,13 @@ public class ConsultationLeadDAO {
     public Map<String, Integer> getSourceStats(String companyId) throws SQLException {
         Map<String, Integer> stats = new HashMap<>();
         
-        String sql = "SELECT source, COUNT(*) as count FROM consultation_leads";
-        if (companyId != null) {
-            sql += " WHERE company_id = ?";
-        }
-        sql += " GROUP BY source ORDER BY count DESC";
+        String sql = "SELECT consultation_source, COUNT(*) as count FROM consultation_leads " +
+                    "GROUP BY consultation_source ORDER BY count DESC";
         
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            if (companyId != null) {
-                pstmt.setString(1, companyId);
-            }
-            
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    String source = rs.getString("source");
+                    String source = rs.getString("consultation_source");
                     if (source == null || source.isEmpty()) {
                         source = "직접 유입";
                     }
@@ -141,19 +106,10 @@ public class ConsultationLeadDAO {
         
         String sql = "SELECT HOUR(created_at) as hour, COUNT(*) as count " +
                     "FROM consultation_leads " +
-                    "WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
-        
-        if (companyId != null) {
-            sql += " AND company_id = ?";
-        }
-        
-        sql += " GROUP BY HOUR(created_at) ORDER BY hour";
+                    "WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) " +
+                    "GROUP BY HOUR(created_at) ORDER BY hour";
         
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            if (companyId != null) {
-                pstmt.setString(1, companyId);
-            }
-            
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     stats.put(rs.getInt("hour"), rs.getInt("count"));
@@ -167,18 +123,10 @@ public class ConsultationLeadDAO {
     public List<ConsultationLead> getRecentLeads(int limit, String companyId) throws SQLException {
         List<ConsultationLead> list = new ArrayList<>();
         
-        String sql = "SELECT * FROM consultation_leads";
-        if (companyId != null) {
-            sql += " WHERE company_id = ?";
-        }
-        sql += " ORDER BY created_at DESC LIMIT ?";
+        String sql = "SELECT * FROM consultation_leads ORDER BY created_at DESC LIMIT ?";
         
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            int paramIndex = 1;
-            if (companyId != null) {
-                pstmt.setString(paramIndex++, companyId);
-            }
-            pstmt.setInt(paramIndex, limit);
+            pstmt.setInt(1, limit);
             
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -196,15 +144,9 @@ public class ConsultationLeadDAO {
         // 접수 수
         String leadSql = "SELECT COUNT(*) as count FROM consultation_leads " +
                         "WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY)";
-        if (companyId != null) {
-            leadSql += " AND company_id = ?";
-        }
         
         try (PreparedStatement pstmt = conn.prepareStatement(leadSql)) {
             pstmt.setInt(1, days);
-            if (companyId != null) {
-                pstmt.setString(2, companyId);
-            }
             
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
@@ -213,18 +155,14 @@ public class ConsultationLeadDAO {
             }
         }
         
-        // 접속 수 (access_logs에서)
-        String accessSql = "SELECT COUNT(*) as count FROM access_logs " +
-                          "WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY)";
-        if (companyId != null) {
-            accessSql += " AND company_id = ?";
-        }
+        // 접속 수 (traffic_logs에서)
+        String accessSql = "SELECT COUNT(DISTINCT session_id) as count FROM traffic_logs " +
+                          "WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY) " +
+                          "AND ip_address != '0:0:0:0:0:0:0:1' " +
+                          "AND (landing_page IS NULL OR landing_page NOT LIKE '%localhost:8081%')";
         
         try (PreparedStatement pstmt = conn.prepareStatement(accessSql)) {
             pstmt.setInt(1, days);
-            if (companyId != null) {
-                pstmt.setString(2, companyId);
-            }
             
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
@@ -245,15 +183,17 @@ public class ConsultationLeadDAO {
     // ResultSet을 ConsultationLead 객체로 매핑
     private ConsultationLead mapResultSetToLead(ResultSet rs) throws SQLException {
         ConsultationLead lead = new ConsultationLead();
-        lead.setId(rs.getInt("id"));
-        lead.setCompanyId(rs.getString("company_id"));
+        lead.setId(rs.getLong("id"));
+        lead.setSessionId(rs.getString("session_id"));
+        lead.setConsultationSource(rs.getString("consultation_source"));
         lead.setName(rs.getString("name"));
         lead.setPhone(rs.getString("phone"));
         lead.setEmail(rs.getString("email"));
-        lead.setSubject(rs.getString("subject"));
+        lead.setDebtAmount(rs.getString("debt_amount"));
+        lead.setMonthlyIncome(rs.getString("monthly_income"));
         lead.setMessage(rs.getString("message"));
-        lead.setSource(rs.getString("source"));
         lead.setStatus(rs.getString("status"));
+        lead.setUserAgent(rs.getString("user_agent"));
         lead.setIpAddress(rs.getString("ip_address"));
         lead.setCreatedAt(rs.getTimestamp("created_at"));
         lead.setUpdatedAt(rs.getTimestamp("updated_at"));

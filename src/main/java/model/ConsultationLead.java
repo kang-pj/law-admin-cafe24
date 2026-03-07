@@ -3,34 +3,44 @@ package model;
 import java.sql.Timestamp;
 
 public class ConsultationLead {
-    private int id;
-    private String companyId;
+    private long id;
+    private String sessionId;
+    private String consultationSource;
     private String name;
     private String phone;
     private String email;
-    private String subject;
+    private String debtAmount;
+    private String monthlyIncome;
     private String message;
-    private String source;  // 유입 경로 (organic, referral, direct 등)
-    private String status;  // pending, contacted, completed, cancelled
+    private String status;
+    private String userAgent;
     private String ipAddress;
     private Timestamp createdAt;
     private Timestamp updatedAt;
     
     // Getters and Setters
-    public int getId() {
+    public long getId() {
         return id;
     }
     
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
     
-    public String getCompanyId() {
-        return companyId;
+    public String getSessionId() {
+        return sessionId;
     }
     
-    public void setCompanyId(String companyId) {
-        this.companyId = companyId;
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+    
+    public String getConsultationSource() {
+        return consultationSource;
+    }
+    
+    public void setConsultationSource(String consultationSource) {
+        this.consultationSource = consultationSource;
     }
     
     public String getName() {
@@ -57,12 +67,20 @@ public class ConsultationLead {
         this.email = email;
     }
     
-    public String getSubject() {
-        return subject;
+    public String getDebtAmount() {
+        return debtAmount;
     }
     
-    public void setSubject(String subject) {
-        this.subject = subject;
+    public void setDebtAmount(String debtAmount) {
+        this.debtAmount = debtAmount;
+    }
+    
+    public String getMonthlyIncome() {
+        return monthlyIncome;
+    }
+    
+    public void setMonthlyIncome(String monthlyIncome) {
+        this.monthlyIncome = monthlyIncome;
     }
     
     public String getMessage() {
@@ -73,20 +91,20 @@ public class ConsultationLead {
         this.message = message;
     }
     
-    public String getSource() {
-        return source;
-    }
-    
-    public void setSource(String source) {
-        this.source = source;
-    }
-    
     public String getStatus() {
         return status;
     }
     
     public void setStatus(String status) {
         this.status = status;
+    }
+    
+    public String getUserAgent() {
+        return userAgent;
+    }
+    
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
     }
     
     public String getIpAddress() {

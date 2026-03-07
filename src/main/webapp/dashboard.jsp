@@ -233,20 +233,25 @@
                                                 </div>
 
                                                 <div class="dashboard-grid" style="margin-top: 24px;">
-                                                    <a href="#" class="card card-link">
+                                                    <a href="<%= request.getContextPath() %>/admin/stats/access" class="card card-link">
                                                         <h3>접속 통계</h3>
+                                                        <p>바로가기 →</p>
+                                                    </a>
+                                                    
+                                                    <a href="<%= request.getContextPath() %>/admin/inquiry/stats" class="card card-link">
+                                                        <h3>전문 통계</h3>
                                                         <p>바로가기 →</p>
                                                     </a>
 
                                                     <% if (isAdmin || isMaster) { %>
-                                                        <a href="#" class="card card-link">
+                                                        <a href="<%= request.getContextPath() %>/admin/user/list" class="card card-link">
                                                             <h3>관리자 설정</h3>
                                                             <p>바로가기 →</p>
                                                         </a>
                                                         <% } %>
 
                                                             <% if (isMaster) { %>
-                                                                <a href="#" class="card card-link">
+                                                                <a href="<%= request.getContextPath() %>/admin/company/list" class="card card-link">
                                                                     <h3>업체 관리</h3>
                                                                     <p>바로가기 →</p>
                                                                 </a>

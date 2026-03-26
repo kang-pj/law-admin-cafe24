@@ -97,13 +97,14 @@ public class AdminDAO {
     }
     
     // 비밀번호 변경
-    public void updatePassword(String id, String newPassword) throws SQLException {
+    public boolean updatePassword(String id, String newPassword) throws SQLException {
         String sql = "UPDATE admins SET password = ? WHERE id = ?";
         
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, newPassword);
             pstmt.setString(2, id);
-            pstmt.executeUpdate();
+            int result = pstmt.executeUpdate();
+            return result > 0;
         }
     }
     

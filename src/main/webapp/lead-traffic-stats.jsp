@@ -1,5 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.*" %>
+<%@ page import="java.net.URLDecoder" %>
+<%!
+    private String decode(Object value) {
+        if (value == null) return null;
+        try {
+            return URLDecoder.decode(value.toString(), "UTF-8");
+        } catch (Exception e) {
+            return value.toString();
+        }
+    }
+%>
 <%
     String period = (String) request.getAttribute("period");
     List<Map<String, Object>> leads = (List<Map<String, Object>>) request.getAttribute("leads");
@@ -276,13 +287,13 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>신청일시</th>
-                            <th>이름</th>
-                            <th>연락처</th>
-                            <th>상담 경로</th>
+                            <th style="white-space: nowrap;">신청일시</th>
+                            <th style="white-space: nowrap; min-width: 80px;">이름</th>
+                            <th style="white-space: nowrap;">연락처</th>
+                            <th style="white-space: nowrap;">상담 경로</th>
                             <th>유입 정보</th>
-                            <th>디바이스</th>
-                            <th>상태</th>
+                            <th style="white-space: nowrap;">디바이스</th>
+                            <th style="white-space: nowrap; min-width: 70px;">상태</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -295,18 +306,18 @@
                             <td><%= lead.get("consultationSource") != null ? lead.get("consultationSource") : "-" %></td>
                             <td>
                                 <% if (lead.get("utmSource") != null) { %>
-                                    <%= lead.get("utmSource") %>
+                                    <%= decode(lead.get("utmSource")) %>
                                     <% if (lead.get("utmMedium") != null) { %>
-                                        / <%= lead.get("utmMedium") %>
+                                        / <%= decode(lead.get("utmMedium")) %>
                                     <% } %>
                                 <% } else if (lead.get("referrerUrl") != null) { %>
-                                    <%= lead.get("referrerUrl") %>
+                                    <%= decode(lead.get("referrerUrl")) %>
                                 <% } else { %>
                                     직접 유입
                                 <% } %>
                                 <div class="traffic-info">
                                     <% if (lead.get("landingPage") != null) { %>
-                                        랜딩: <%= lead.get("landingPage") %>
+                                        랜딩: <%= decode(lead.get("landingPage")) %>
                                     <% } %>
                                 </div>
                             </td>

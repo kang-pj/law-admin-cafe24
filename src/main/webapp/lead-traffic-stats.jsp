@@ -18,9 +18,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>상담 신청 & 유입 통계</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/common.css">
     <style>
-        <%@ include file="/css/common.css" %>
-        
         .stats-header {
             display: flex;
             justify-content: space-between;

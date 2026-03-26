@@ -19,9 +19,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>비밀번호 변경</title>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/common.css">
     <style>
-        <%@ include file="/css/common.css" %>
-        
         .password-form {
             background: white;
             padding: 30px;

@@ -76,6 +76,33 @@
             color: white;
         }
         
+        .date-picker-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .date-picker-group input[type="date"] {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .apply-btn {
+            padding: 8px 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .apply-btn:hover {
+            background: #5568d3;
+        }
+        
         .stats-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -231,6 +258,14 @@
                         <button class="period-btn <%= "week".equals(period) ? "active" : "" %>" onclick="setPeriod('week')">7일</button>
                         <button class="period-btn <%= "month".equals(period) ? "active" : "" %>" onclick="setPeriod('month')">이번 달</button>
                         <button class="period-btn <%= "30days".equals(period) ? "active" : "" %>" onclick="setPeriod('30days')">30일</button>
+                        <button class="period-btn <%= "custom".equals(period) ? "active" : "" %>" onclick="toggleDatePicker()">직접 선택</button>
+                    </div>
+                    
+                    <div class="date-picker-group" id="datePickerGroup" style="display: <%= "custom".equals(period) ? "flex" : "none" %>;">
+                        <input type="date" id="startDate" value="<%= request.getAttribute("startDate") %>">
+                        <span>~</span>
+                        <input type="date" id="endDate" value="<%= request.getAttribute("endDate") %>">
+                        <button class="apply-btn" onclick="applyCustomDate()">조회</button>
                     </div>
                 </div>
             </div>
@@ -372,6 +407,21 @@
     <script>
         function setPeriod(period) {
             window.location.href = '?period=' + period;
+        }
+        
+        function toggleDatePicker() {
+            const group = document.getElementById('datePickerGroup');
+            group.style.display = group.style.display === 'none' ? 'flex' : 'none';
+        }
+        
+        function applyCustomDate() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            if (!startDate || !endDate) {
+                alert('시작일과 종료일을 모두 선택해주세요.');
+                return;
+            }
+            window.location.href = '?period=custom&startDate=' + startDate + '&endDate=' + endDate;
         }
         
         <% if (dailyStats != null && !dailyStats.isEmpty()) { %>

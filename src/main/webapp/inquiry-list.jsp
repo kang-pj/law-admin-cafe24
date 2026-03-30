@@ -19,6 +19,7 @@
     else if ("SELF".equals(type)) pageTitle = "자가진단 게시판";
     else if ("KAKAO".equals(type)) pageTitle = "카카오 문의";
     else if ("EMAIL".equals(type)) pageTitle = "이메일 문의";
+    else if ("CALL".equals(type)) pageTitle = "전화 유입";
     else if ("ETC".equals(type)) pageTitle = "기타 문의";
 %>
 <!DOCTYPE html>

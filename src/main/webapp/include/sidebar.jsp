@@ -50,12 +50,10 @@
             <ul class="submenu">
                 <li><a href="<%= contextPath %>/admin/inquiry/list?type=INQ" 
                        class="<%= currentPath.contains("/inquiry/") && "INQ".equals(request.getParameter("type")) ? "active" : "" %>">문의 게시판</a></li>
-                <li><a href="<%= contextPath %>/admin/inquiry/list?type=SELF"
-                       class="<%= currentPath.contains("/inquiry/") && "SELF".equals(request.getParameter("type")) ? "active" : "" %>">자가진단 게시판</a></li>
                 <li><a href="<%= contextPath %>/admin/inquiry/list?type=KAKAO"
                        class="<%= currentPath.contains("/inquiry/") && "KAKAO".equals(request.getParameter("type")) ? "active" : "" %>">카카오 문의</a></li>
-                <li><a href="<%= contextPath %>/admin/inquiry/list?type=EMAIL"
-                       class="<%= currentPath.contains("/inquiry/") && "EMAIL".equals(request.getParameter("type")) ? "active" : "" %>">이메일 문의</a></li>
+                <li><a href="<%= contextPath %>/admin/inquiry/list?type=CALL"
+                       class="<%= currentPath.contains("/inquiry/") && "CALL".equals(request.getParameter("type")) ? "active" : "" %>">전화 유입</a></li>
                 <li><a href="<%= contextPath %>/admin/inquiry/list?type=ETC"
                        class="<%= currentPath.contains("/inquiry/") && "ETC".equals(request.getParameter("type")) ? "active" : "" %>">기타 문의</a></li>
             </ul>

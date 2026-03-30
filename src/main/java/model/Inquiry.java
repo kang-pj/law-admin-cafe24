@@ -71,6 +71,7 @@ public class Inquiry {
             case "SELF": return "자가진단";
             case "KAKAO": return "카카오";
             case "EMAIL": return "이메일";
+            case "CALL": return "전화유입";
             case "ETC": return "기타";
             default: return type;
         }

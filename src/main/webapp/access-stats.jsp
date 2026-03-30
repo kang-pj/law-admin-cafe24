@@ -1,7 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.*" %>
+<%@ page import="java.net.URLDecoder" %>
 <%@ page import="model.AccessLog" %>
 <%@ page import="model.Company" %>
+<%!
+    private String decodeUrl(String value) {
+        if (value == null) return null;
+        try {
+            return URLDecoder.decode(value, "UTF-8");
+        } catch (Exception e) {
+            return value;
+        }
+    }
+%>
 <%
     String adminRole = (String) session.getAttribute("adminRole");
     String period = (String) request.getAttribute("period");
@@ -318,8 +329,8 @@
                             <td><%= log.getCompanyId() %></td>
                             <% } %>
                             <td><%= log.getIpAddress() %></td>
-                            <td><%= log.getPageUrl() %></td>
-                            <td><%= log.getReferrer() != null ? log.getReferrer() : "-" %></td>
+                            <td><%= decodeUrl(log.getPageUrl()) %></td>
+                            <td><%= log.getReferrer() != null ? decodeUrl(log.getReferrer()) : "-" %></td>
                         </tr>
                         <% } 
                         } else { %>

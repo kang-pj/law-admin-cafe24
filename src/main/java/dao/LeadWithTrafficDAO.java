@@ -22,13 +22,18 @@ public class LeadWithTrafficDAO {
         sql.append("t.company_id, t.landing_page, t.referrer_url, t.utm_source, t.utm_medium, t.utm_campaign, ");
         sql.append("t.device_type, t.os, t.browser, t.ip_address ");
         sql.append("FROM consultation_leads c ");
-        sql.append("LEFT JOIN traffic_logs t ON c.session_id = t.session_id ");
+        sql.append("LEFT JOIN (");
+        sql.append("  SELECT session_id, company_id, landing_page, referrer_url, utm_source, utm_medium, utm_campaign, ");
+        sql.append("         device_type, os, browser, ip_address ");
+        sql.append("  FROM traffic_logs ");
+        sql.append("  WHERE (session_id, id) IN (SELECT session_id, MIN(id) FROM traffic_logs GROUP BY session_id) ");
+        sql.append(") t ON c.session_id = t.session_id ");
         sql.append("WHERE DATE(c.created_at) BETWEEN ? AND ? ");
-        
+
         if (companyId != null && !companyId.isEmpty()) {
             sql.append("AND t.company_id = ? ");
         }
-        
+
         sql.append("ORDER BY c.created_at DESC LIMIT ? OFFSET ?");
         
         List<Map<String, Object>> list = new ArrayList<>();
@@ -79,9 +84,12 @@ public class LeadWithTrafficDAO {
     public int getCount(String companyId, String startDate, String endDate) throws SQLException {
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT COUNT(DISTINCT c.id) FROM consultation_leads c ");
-        sql.append("LEFT JOIN traffic_logs t ON c.session_id = t.session_id ");
+        sql.append("LEFT JOIN (");
+        sql.append("  SELECT session_id, company_id FROM traffic_logs ");
+        sql.append("  WHERE (session_id, id) IN (SELECT session_id, MIN(id) FROM traffic_logs GROUP BY session_id) ");
+        sql.append(") t ON c.session_id = t.session_id ");
         sql.append("WHERE DATE(c.created_at) BETWEEN ? AND ? ");
-        
+
         if (companyId != null && !companyId.isEmpty()) {
             sql.append("AND t.company_id = ? ");
         }

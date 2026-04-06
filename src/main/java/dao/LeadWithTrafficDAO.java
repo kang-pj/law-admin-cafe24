@@ -29,11 +29,6 @@ public class LeadWithTrafficDAO {
         sql.append("  WHERE (session_id, id) IN (SELECT session_id, MIN(id) FROM traffic_logs GROUP BY session_id) ");
         sql.append(") t ON c.session_id = t.session_id ");
         sql.append("WHERE DATE(c.created_at) BETWEEN ? AND ? ");
-
-        if (companyId != null && !companyId.isEmpty()) {
-            sql.append("AND t.company_id = ? ");
-        }
-
         sql.append("ORDER BY c.created_at DESC LIMIT ? OFFSET ?");
         
         List<Map<String, Object>> list = new ArrayList<>();
@@ -41,9 +36,6 @@ public class LeadWithTrafficDAO {
             int paramIndex = 1;
             pstmt.setString(paramIndex++, startDate);
             pstmt.setString(paramIndex++, endDate);
-            if (companyId != null && !companyId.isEmpty()) {
-                pstmt.setString(paramIndex++, companyId);
-            }
             pstmt.setInt(paramIndex++, pageSize);
             pstmt.setInt(paramIndex++, (page - 1) * pageSize);
             
@@ -89,18 +81,11 @@ public class LeadWithTrafficDAO {
         sql.append("  WHERE (session_id, id) IN (SELECT session_id, MIN(id) FROM traffic_logs GROUP BY session_id) ");
         sql.append(") t ON c.session_id = t.session_id ");
         sql.append("WHERE DATE(c.created_at) BETWEEN ? AND ? ");
-
-        if (companyId != null && !companyId.isEmpty()) {
-            sql.append("AND t.company_id = ? ");
-        }
         
         try (PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
             int paramIndex = 1;
             pstmt.setString(paramIndex++, startDate);
             pstmt.setString(paramIndex++, endDate);
-            if (companyId != null && !companyId.isEmpty()) {
-                pstmt.setString(paramIndex++, companyId);
-            }
             
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
@@ -121,22 +106,20 @@ public class LeadWithTrafficDAO {
         sql.append("LEFT JOIN traffic_logs t ON c.session_id = t.session_id ");
         sql.append("AND t.ip_address != '0:0:0:0:0:0:0:1' ");
         sql.append("AND (t.landing_page IS NULL OR t.landing_page NOT LIKE '%localhost:8081%') ");
-        sql.append("WHERE DATE(c.created_at) BETWEEN ? AND ? ");
-        
         if (companyId != null && !companyId.isEmpty()) {
             sql.append("AND t.company_id = ? ");
         }
-        
+        sql.append("WHERE DATE(c.created_at) BETWEEN ? AND ? ");
         sql.append("GROUP BY DATE(c.created_at) ORDER BY date");
         
         List<Map<String, Object>> result = new ArrayList<>();
         try (PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
             int paramIndex = 1;
-            pstmt.setString(paramIndex++, startDate);
-            pstmt.setString(paramIndex++, endDate);
             if (companyId != null && !companyId.isEmpty()) {
                 pstmt.setString(paramIndex++, companyId);
             }
+            pstmt.setString(paramIndex++, startDate);
+            pstmt.setString(paramIndex++, endDate);
             
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
@@ -158,22 +141,20 @@ public class LeadWithTrafficDAO {
         sql.append("COUNT(DISTINCT c.id) as count ");
         sql.append("FROM consultation_leads c ");
         sql.append("LEFT JOIN traffic_logs t ON c.session_id = t.session_id ");
-        sql.append("WHERE DATE(c.created_at) BETWEEN ? AND ? ");
-        
         if (companyId != null && !companyId.isEmpty()) {
             sql.append("AND t.company_id = ? ");
         }
-        
+        sql.append("WHERE DATE(c.created_at) BETWEEN ? AND ? ");
         sql.append("GROUP BY COALESCE(t.utm_source, '직접 유입') ORDER BY count DESC");
         
         List<Map<String, Object>> result = new ArrayList<>();
         try (PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
             int paramIndex = 1;
-            pstmt.setString(paramIndex++, startDate);
-            pstmt.setString(paramIndex++, endDate);
             if (companyId != null && !companyId.isEmpty()) {
                 pstmt.setString(paramIndex++, companyId);
             }
+            pstmt.setString(paramIndex++, startDate);
+            pstmt.setString(paramIndex++, endDate);
             
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
@@ -194,22 +175,20 @@ public class LeadWithTrafficDAO {
         sql.append("COUNT(DISTINCT c.id) as count ");
         sql.append("FROM consultation_leads c ");
         sql.append("LEFT JOIN traffic_logs t ON c.session_id = t.session_id ");
-        sql.append("WHERE DATE(c.created_at) BETWEEN ? AND ? ");
-        
         if (companyId != null && !companyId.isEmpty()) {
             sql.append("AND t.company_id = ? ");
         }
-        
+        sql.append("WHERE DATE(c.created_at) BETWEEN ? AND ? ");
         sql.append("GROUP BY COALESCE(t.device_type, '알 수 없음') ORDER BY count DESC");
         
         List<Map<String, Object>> result = new ArrayList<>();
         try (PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
             int paramIndex = 1;
-            pstmt.setString(paramIndex++, startDate);
-            pstmt.setString(paramIndex++, endDate);
             if (companyId != null && !companyId.isEmpty()) {
                 pstmt.setString(paramIndex++, companyId);
             }
+            pstmt.setString(paramIndex++, startDate);
+            pstmt.setString(paramIndex++, endDate);
             
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
@@ -226,24 +205,13 @@ public class LeadWithTrafficDAO {
     public Map<String, Object> getConversionData(String companyId, String startDate, String endDate) throws SQLException {
         Map<String, Object> data = new HashMap<>();
         
-        // 상담 신청 수
-        StringBuilder leadSql = new StringBuilder();
-        leadSql.append("SELECT COUNT(DISTINCT c.id) as count FROM consultation_leads c ");
-        leadSql.append("LEFT JOIN traffic_logs t ON c.session_id = t.session_id ");
-        leadSql.append("WHERE DATE(c.created_at) BETWEEN ? AND ? ");
+        // 상담 신청 수 (company_id 무관하게 전체)
+        String leadSql = "SELECT COUNT(*) as count FROM consultation_leads " +
+                        "WHERE DATE(created_at) BETWEEN ? AND ?";
         
-        if (companyId != null && !companyId.isEmpty()) {
-            leadSql.append("AND t.company_id = ? ");
-        }
-        
-        try (PreparedStatement pstmt = conn.prepareStatement(leadSql.toString())) {
-            int paramIndex = 1;
-            pstmt.setString(paramIndex++, startDate);
-            pstmt.setString(paramIndex++, endDate);
-            if (companyId != null && !companyId.isEmpty()) {
-                pstmt.setString(paramIndex++, companyId);
-            }
-            
+        try (PreparedStatement pstmt = conn.prepareStatement(leadSql)) {
+            pstmt.setString(1, startDate);
+            pstmt.setString(2, endDate);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 data.put("leads", rs.getInt("count"));
@@ -256,7 +224,6 @@ public class LeadWithTrafficDAO {
         visitSql.append("WHERE DATE(created_at) BETWEEN ? AND ? ");
         visitSql.append("AND ip_address != '0:0:0:0:0:0:0:1' ");
         visitSql.append("AND (landing_page IS NULL OR landing_page NOT LIKE '%localhost:8081%') ");
-        
         if (companyId != null && !companyId.isEmpty()) {
             visitSql.append("AND company_id = ? ");
         }
@@ -268,14 +235,12 @@ public class LeadWithTrafficDAO {
             if (companyId != null && !companyId.isEmpty()) {
                 pstmt.setString(paramIndex++, companyId);
             }
-            
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 data.put("visits", rs.getInt("count"));
             }
         }
         
-        // 전환율 계산
         int leads = (Integer) data.getOrDefault("leads", 0);
         int visits = (Integer) data.getOrDefault("visits", 0);
         double conversionRate = visits > 0 ? (double) leads / visits * 100 : 0;

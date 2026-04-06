@@ -29,9 +29,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>상담 신청 & 유입 통계</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function setPeriod(period) {
+            window.location.href = '?period=' + period;
+        }
+        function toggleDatePicker() {
+            const group = document.getElementById('datePickerGroup');
+            group.style.display = group.style.display === 'none' ? 'flex' : 'none';
+        }
+        function applyCustomDate() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            if (!startDate || !endDate) {
+                alert('시작일과 종료일을 모두 선택해주세요.');
+                return;
+            }
+            window.location.href = '?period=custom&startDate=' + startDate + '&endDate=' + endDate;
+        }
+    </script>
     <style>
         <%@ include file="/css/common.css" %>
-        
+    </style>
+    <style>
         .stats-header {
             display: flex;
             justify-content: space-between;
@@ -383,20 +402,26 @@
                 
                 <% if (totalPages > 1) { %>
                 <div class="pagination">
+                    <%
+                        String ltStartDate = (String) request.getAttribute("startDate");
+                        String ltEndDate = (String) request.getAttribute("endDate");
+                        String ltDateParams = "custom".equals(period) && ltStartDate != null && ltEndDate != null
+                            ? "&startDate=" + ltStartDate + "&endDate=" + ltEndDate : "";
+                    %>
                     <% if (currentPage > 1) { %>
-                    <a href="?period=<%= period %>&page=<%= currentPage - 1 %>">이전</a>
+                    <a href="?period=<%= period %><%= ltDateParams %>&page=<%= currentPage - 1 %>">이전</a>
                     <% } %>
                     
                     <% for (int i = 1; i <= totalPages; i++) { 
                         if (i == currentPage) { %>
                     <span class="active"><%= i %></span>
                     <% } else { %>
-                    <a href="?period=<%= period %>&page=<%= i %>"><%= i %></a>
+                    <a href="?period=<%= period %><%= ltDateParams %>&page=<%= i %>"><%= i %></a>
                     <% } 
                     } %>
                     
                     <% if (currentPage < totalPages) { %>
-                    <a href="?period=<%= period %>&page=<%= currentPage + 1 %>">다음</a>
+                    <a href="?period=<%= period %><%= ltDateParams %>&page=<%= currentPage + 1 %>">다음</a>
                     <% } %>
                 </div>
                 <% } %>
@@ -404,9 +429,11 @@
         </main>
     </div>
     
+    
+    
     <script>
-        function setPeriod(period) {
-            window.location.href = '?period=' + period;
+        function setPeriod(p) {
+            window.location.href = '?period=' + p;
         }
         
         function toggleDatePicker() {
@@ -423,7 +450,9 @@
             }
             window.location.href = '?period=custom&startDate=' + startDate + '&endDate=' + endDate;
         }
-        
+    </script>
+    
+    <script>
         <% if (dailyStats != null && !dailyStats.isEmpty()) { %>
         // 일별 차트
         const dailyCtx = document.getElementById('dailyChart').getContext('2d');
@@ -483,7 +512,8 @@
                 labels: [<% for (int i = 0; i < utmSourceStats.size(); i++) { 
                     Map<String, Object> stat = utmSourceStats.get(i);
                     if (i > 0) out.print(", ");
-                    out.print("'" + stat.get("source") + "'");
+                    String src = String.valueOf(stat.get("source")).replace("'", "\\'");
+                    out.print("'" + src + "'");
                 } %>],
                 datasets: [{
                     data: [<% for (int i = 0; i < utmSourceStats.size(); i++) { 
@@ -510,7 +540,8 @@
                 labels: [<% for (int i = 0; i < deviceStats.size(); i++) { 
                     Map<String, Object> stat = deviceStats.get(i);
                     if (i > 0) out.print(", ");
-                    out.print("'" + stat.get("device") + "'");
+                    String dev = String.valueOf(stat.get("device")).replace("'", "\\'");
+                    out.print("'" + dev + "'");
                 } %>],
                 datasets: [{
                     data: [<% for (int i = 0; i < deviceStats.size(); i++) { 

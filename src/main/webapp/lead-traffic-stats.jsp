@@ -348,6 +348,7 @@
                             <th style="white-space: nowrap;">상담 경로</th>
                             <th>유입 정보</th>
                             <th style="white-space: nowrap;">디바이스</th>
+                            <th style="white-space: nowrap;">IP</th>
                             <th style="white-space: nowrap; min-width: 70px;">상태</th>
                         </tr>
                     </thead>
@@ -383,6 +384,7 @@
                                     <%= lead.get("browser") != null ? " / " + lead.get("browser") : "" %>
                                 </div>
                             </td>
+                            <td><%= lead.get("ipAddress") != null ? lead.get("ipAddress") : "-" %></td>
                             <td>
                                 <span class="status-badge status-<%= lead.get("status") %>">
                                     <%= "pending".equals(lead.get("status")) ? "대기" : "완료" %>
@@ -392,7 +394,7 @@
                         <% } 
                         } else { %>
                         <tr>
-                            <td colspan="7" style="text-align: center; padding: 40px;">
+                            <td colspan="8" style="text-align: center; padding: 40px;">
                                 상담 신청 내역이 없습니다.
                             </td>
                         </tr>

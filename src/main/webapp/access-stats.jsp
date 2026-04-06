@@ -344,21 +344,27 @@
                 </table>
                 
                 <% if (totalPages > 1) { %>
+                <%
+                    String startDate = (String) request.getAttribute("startDate");
+                    String endDate = (String) request.getAttribute("endDate");
+                    String dateParams = "custom".equals(period) && startDate != null && endDate != null
+                        ? "&startDate=" + startDate + "&endDate=" + endDate : "";
+                %>
                 <div class="pagination">
                     <% if (currentPage > 1) { %>
-                    <a href="?period=<%= period %><%= companyFilter != null ? "&company=" + companyFilter : "" %>&page=<%= currentPage - 1 %>">이전</a>
+                    <a href="?period=<%= period %><%= companyFilter != null ? "&company=" + companyFilter : "" %><%= dateParams %>&page=<%= currentPage - 1 %>">이전</a>
                     <% } %>
                     
                     <% for (int i = 1; i <= totalPages; i++) { 
                         if (i == currentPage) { %>
                     <span class="active"><%= i %></span>
                     <% } else { %>
-                    <a href="?period=<%= period %><%= companyFilter != null ? "&company=" + companyFilter : "" %>&page=<%= i %>"><%= i %></a>
+                    <a href="?period=<%= period %><%= companyFilter != null ? "&company=" + companyFilter : "" %><%= dateParams %>&page=<%= i %>"><%= i %></a>
                     <% } 
                     } %>
                     
                     <% if (currentPage < totalPages) { %>
-                    <a href="?period=<%= period %><%= companyFilter != null ? "&company=" + companyFilter : "" %>&page=<%= currentPage + 1 %>">다음</a>
+                    <a href="?period=<%= period %><%= companyFilter != null ? "&company=" + companyFilter : "" %><%= dateParams %>&page=<%= currentPage + 1 %>">다음</a>
                     <% } %>
                 </div>
                 <% } %>

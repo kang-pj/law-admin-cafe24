@@ -338,7 +338,13 @@
             </div>
             
             <div class="lead-table">
-                <h2>상담 신청 목록 (<%= totalCount %>건)</h2>
+                <h2 style="display: flex; align-items: center; justify-content: space-between;">
+                    <span>상담 신청 목록 (<%= totalCount %>건)</span>
+                    <a href="<%= request.getContextPath() %>/admin/stats/lead-traffic/excel?period=<%= period %><%= "custom".equals(period) && request.getAttribute("startDate") != null ? "&startDate=" + request.getAttribute("startDate") + "&endDate=" + request.getAttribute("endDate") : "" %>"
+                       style="font-size: 13px; font-weight: 500; padding: 6px 14px; background: #28a745; color: white; border-radius: 4px; text-decoration: none; white-space: nowrap;">
+                        📥 엑셀 다운로드
+                    </a>
+                </h2>
                 <table>
                     <thead>
                         <tr>

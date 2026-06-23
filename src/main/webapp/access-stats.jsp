@@ -236,6 +236,7 @@
                     <!-- 기간 버튼 -->
                     <div class="period-buttons">
                         <button class="period-btn <%= "today".equals(period) ? "active" : "" %>" onclick="setPeriod('today')">오늘</button>
+                        <button class="period-btn <%= "yesterday".equals(period) ? "active" : "" %>" onclick="setPeriod('yesterday')">어제</button>
                         <button class="period-btn <%= "week".equals(period) ? "active" : "" %>" onclick="setPeriod('week')">7일</button>
                         <button class="period-btn <%= "month".equals(period) ? "active" : "" %>" onclick="setPeriod('month')">이번 달</button>
                         <button class="period-btn <%= "30days".equals(period) ? "active" : "" %>" onclick="setPeriod('30days')">30일</button>
@@ -307,7 +308,13 @@
             <% } %>
             
             <div class="log-table">
-                <h2>상세 로그 (<%= totalCount %>건)</h2>
+                <h2 style="display: flex; align-items: center; justify-content: space-between;">
+                    <span>상세 로그 (<%= totalCount %>건)</span>
+                    <a href="<%= request.getContextPath() %>/admin/access/stats/excel?period=<%= period %><%= "custom".equals(period) && request.getAttribute("startDate") != null ? "&startDate=" + request.getAttribute("startDate") + "&endDate=" + request.getAttribute("endDate") : "" %><%= companyFilter != null && !companyFilter.isEmpty() ? "&company=" + companyFilter : "" %>"
+                       style="font-size: 13px; font-weight: 500; padding: 6px 14px; background: #28a745; color: white; border-radius: 4px; text-decoration: none; white-space: nowrap;">
+                        📥 엑셀 다운로드
+                    </a>
+                </h2>
                 <table>
                     <thead>
                         <tr>

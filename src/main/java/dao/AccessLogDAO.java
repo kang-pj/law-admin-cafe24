@@ -137,6 +137,46 @@ public class AccessLogDAO {
         return list;
     }
     
+    // 전체 로그 목록 (엑셀 다운로드용, 페이징 없음)
+    public List<AccessLog> getAllLogs(String companyId, String startDate, String endDate) throws SQLException {
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * FROM traffic_logs ");
+        sql.append("WHERE DATE(created_at) BETWEEN ? AND ? ");
+        sql.append("AND ip_address != '0:0:0:0:0:0:0:1' ");
+        sql.append("AND (landing_page IS NULL OR landing_page NOT LIKE '%localhost:8081%') ");
+
+        if (companyId != null && !companyId.isEmpty()) {
+            sql.append("AND company_id = ? ");
+        }
+
+        sql.append("ORDER BY created_at DESC");
+
+        List<AccessLog> list = new ArrayList<>();
+        try (PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            pstmt.setString(paramIndex++, startDate);
+            pstmt.setString(paramIndex++, endDate);
+            if (companyId != null && !companyId.isEmpty()) {
+                pstmt.setString(paramIndex++, companyId);
+            }
+
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                AccessLog log = new AccessLog();
+                log.setId(rs.getInt("id"));
+                log.setCompanyId(rs.getString("company_id"));
+                log.setIpAddress(rs.getString("ip_address"));
+                log.setUserAgent(rs.getString("user_agent"));
+                log.setPageUrl(rs.getString("landing_page"));
+                log.setReferrer(rs.getString("referrer_url"));
+                log.setSessionId(rs.getString("session_id"));
+                log.setCreatedAt(rs.getTimestamp("created_at"));
+                list.add(log);
+            }
+        }
+        return list;
+    }
+
     // 총 개수
     public int getTotalCount(String companyId) throws SQLException {
         String sql = "SELECT COUNT(*) FROM traffic_logs";

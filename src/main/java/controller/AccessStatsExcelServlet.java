@@ -1,6 +1,7 @@
 package controller;
 
-import dao.LeadWithTrafficDAO;
+import dao.AccessLogDAO;
+import model.AccessLog;
 import model.Admin;
 import util.DBConnection;
 
@@ -20,14 +21,12 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
 
-@WebServlet("/admin/stats/lead-traffic/excel")
-public class LeadTrafficExcelServlet extends HttpServlet {
+@WebServlet("/admin/access/stats/excel")
+public class AccessStatsExcelServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -89,18 +88,21 @@ public class LeadTrafficExcelServlet extends HttpServlet {
         String startDateStr = startDate.format(formatter);
         String endDateStr = endDate.format(formatter);
 
+        // 업체 필터
         String companyId = null;
-        if (!"MASTER".equals(admin.getRole())) {
+        if ("MASTER".equals(admin.getRole())) {
+            companyId = request.getParameter("company");
+        } else {
             companyId = admin.getCompanyId();
         }
 
         try (Connection conn = DBConnection.getConnection()) {
-            LeadWithTrafficDAO dao = new LeadWithTrafficDAO(conn);
-            List<Map<String, Object>> leads = dao.getAllLeadsWithTraffic(companyId, startDateStr, endDateStr);
+            AccessLogDAO dao = new AccessLogDAO(conn);
+            List<AccessLog> logs = dao.getAllLogs(companyId, startDateStr, endDateStr);
 
             // 엑셀 생성
             Workbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet("상담 신청 목록");
+            Sheet sheet = workbook.createSheet("접속 통계");
 
             // 헤더 스타일
             CellStyle headerStyle = workbook.createCellStyle();
@@ -111,11 +113,8 @@ public class LeadTrafficExcelServlet extends HttpServlet {
             headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
             headerStyle.setBorderBottom(BorderStyle.THIN);
 
-            // 헤더 행
-            String[] headers = {"신청일시", "이름", "연락처", "이메일", "상담 경로", "채무액", "월 소득",
-                    "메시지", "상태", "UTM Source", "UTM Medium", "UTM Campaign",
-                    "유입 경로(Referrer)", "랜딩 페이지", "디바이스", "OS", "브라우저", "IP"};
-
+            // 헤더 행 - 시간, IP, 요청URI
+            String[] headers = {"시간", "IP", "요청 URI"};
             Row headerRow = sheet.createRow(0);
             for (int i = 0; i < headers.length; i++) {
                 Cell cell = headerRow.createCell(i);
@@ -125,27 +124,11 @@ public class LeadTrafficExcelServlet extends HttpServlet {
 
             // 데이터 행
             int rowNum = 1;
-            for (Map<String, Object> lead : leads) {
+            for (AccessLog log : logs) {
                 Row row = sheet.createRow(rowNum++);
-
-                row.createCell(0).setCellValue(lead.get("createdAt") != null ? lead.get("createdAt").toString() : "");
-                row.createCell(1).setCellValue(safeStr(lead.get("name")));
-                row.createCell(2).setCellValue(safeStr(lead.get("phone")));
-                row.createCell(3).setCellValue(safeStr(lead.get("email")));
-                row.createCell(4).setCellValue(safeStr(lead.get("consultationSource")));
-                row.createCell(5).setCellValue(safeStr(lead.get("debtAmount")));
-                row.createCell(6).setCellValue(safeStr(lead.get("monthlyIncome")));
-                row.createCell(7).setCellValue(safeStr(lead.get("message")));
-                row.createCell(8).setCellValue("pending".equals(safeStr(lead.get("status"))) ? "대기" : "완료");
-                row.createCell(9).setCellValue(decode(lead.get("utmSource")));
-                row.createCell(10).setCellValue(decode(lead.get("utmMedium")));
-                row.createCell(11).setCellValue(decode(lead.get("utmCampaign")));
-                row.createCell(12).setCellValue(decode(lead.get("referrerUrl")));
-                row.createCell(13).setCellValue(decode(lead.get("landingPage")));
-                row.createCell(14).setCellValue(safeStr(lead.get("deviceType")));
-                row.createCell(15).setCellValue(safeStr(lead.get("os")));
-                row.createCell(16).setCellValue(safeStr(lead.get("browser")));
-                row.createCell(17).setCellValue(safeStr(lead.get("ipAddress")));
+                row.createCell(0).setCellValue(log.getCreatedAt() != null ? log.getCreatedAt().toString() : "");
+                row.createCell(1).setCellValue(safeStr(log.getIpAddress()));
+                row.createCell(2).setCellValue(decode(log.getPageUrl()));
             }
 
             // 컬럼 너비 자동 조정
@@ -153,8 +136,8 @@ public class LeadTrafficExcelServlet extends HttpServlet {
                 sheet.autoSizeColumn(i);
             }
 
-            // 응답 헤더 설정
-            String fileName = "상담신청목록_" + startDateStr + "_" + endDateStr + ".xlsx";
+            // 응답 헤더
+            String fileName = "접속통계_" + startDateStr + "_" + endDateStr + ".xlsx";
             String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8).replace("+", "%20");
 
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");

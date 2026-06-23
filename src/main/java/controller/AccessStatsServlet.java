@@ -71,6 +71,10 @@ public class AccessStatsServlet extends HttpServlet {
             }
         } else {
             switch (period) {
+                case "yesterday":
+                    startDate = endDate.minusDays(1);
+                    endDate = endDate.minusDays(1);
+                    break;
                 case "week":
                     startDate = endDate.minusDays(6);
                     break;

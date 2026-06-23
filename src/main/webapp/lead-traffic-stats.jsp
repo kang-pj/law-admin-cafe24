@@ -274,6 +274,7 @@
                 <div class="filter-group">
                     <div class="period-buttons">
                         <button class="period-btn <%= "today".equals(period) ? "active" : "" %>" onclick="setPeriod('today')">오늘</button>
+                        <button class="period-btn <%= "yesterday".equals(period) ? "active" : "" %>" onclick="setPeriod('yesterday')">어제</button>
                         <button class="period-btn <%= "week".equals(period) ? "active" : "" %>" onclick="setPeriod('week')">7일</button>
                         <button class="period-btn <%= "month".equals(period) ? "active" : "" %>" onclick="setPeriod('month')">이번 달</button>
                         <button class="period-btn <%= "30days".equals(period) ? "active" : "" %>" onclick="setPeriod('30days')">30일</button>
